@@ -1,1 +1,26 @@
-#a
+[build-system]
+requires = ["setuptools>=61.0", "setuptools_scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = “MMI_solver”
+dynamic = ["version"]
+authors = [{name=“Dani”, email=“daniel.berasen@gmail.com”}]
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "matplotlib",
+    "tidy3d",
+    "gplugins",
+    "shapely",
+    "scipy",
+    "tqdm",
+    "scikit-fem"
+]
+
+[tool.setuptools_scm]
+
+
+[tool.setuptools.packages.find]
+where = ["src"]
