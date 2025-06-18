@@ -16,7 +16,10 @@ dependencies = [
     "shapely",
     "scipy",
     "tqdm",
-    "scikit-fem"
+    "scikit-fem",
+    "gdstk",
+    "meshio",
+    "femwell"
 ]
 
 [tool.setuptools_scm]
