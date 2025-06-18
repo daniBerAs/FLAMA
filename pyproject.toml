@@ -6,7 +6,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "MMI_solver"
 version = "0.1.0"
-authors = [{name=“Dani”, email=“daniel.berasen@gmail.com”}]
+authors = [{name="Dani", email="daniel.berasen@gmail.com"}]
 requires-python = ">=3.12"
 dependencies = [
     "numpy",
