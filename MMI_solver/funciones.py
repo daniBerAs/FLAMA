@@ -510,7 +510,7 @@ def MMI(
     return ratio_out ,excess_loss, L_v, intensidad_L, Lpi_TE, Lpi_TM
 
         
-##Funcioned tidy3d
+##Funciones tidy3d
 
 #definimos el waveguide y los tapers
 def create_ridge(w0,x0,y0,y1,z0,z1,angle):
@@ -662,3 +662,403 @@ def create_2D_sim(sim_3D,new_mediums):
     )
 
     return sim_2D
+
+#definimos la simulacion
+def create_2D_MMI_simulation(wvlenth,Len_MMI,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs):
+    MMI_body = td.Structure(
+    geometry = create_ridge2(MMI_width,0,-Len_MMI/2,Len_MMI/2,-wg_array_thickness/2,wg_array_thickness/2,0,taper_length),
+    medium = sin,)
+
+    Wg_in0 = td.Structure(
+        geometry = create_ridge(wg_array_width,-gap/2,-(Len_MMI/2+taper_length+wvg_length),-(Len_MMI/2+taper_length),-wg_array_thickness/2,wg_array_thickness/2,0),
+        medium = sin,
+    )
+    Taper_in0 = td.Structure(
+        geometry = create_taper(MMI_width/3,-gap/2,-(Len_MMI/2+taper_length),-(Len_MMI/2),-wg_array_thickness/2,wg_array_thickness/2,0,wg_array_width),
+        medium = sin,
+    )
+
+    Wg_in1 = td.Structure(
+        geometry = create_ridge(wg_array_width,gap/2,-(Len_MMI/2+taper_length+wvg_length),-(Len_MMI/2+taper_length),-wg_array_thickness/2,wg_array_thickness/2,0),
+        medium = sin,
+    )
+    Taper_in1 = td.Structure(
+        geometry = create_taper(MMI_width/3,gap/2,-(Len_MMI/2+taper_length),-(Len_MMI/2),-wg_array_thickness/2,wg_array_thickness/2,0,wg_array_width),
+        medium = sin,
+    )
+
+    Wg_out0 = td.Structure(
+        geometry = create_ridge(wg_array_width,-gap/2,(Len_MMI/2+taper_length),(Len_MMI/2+taper_length+wvg_length),-wg_array_thickness/2,wg_array_thickness/2,0),
+        medium = sin,
+    )
+    Taper_out0 = td.Structure(
+        geometry = create_taper(MMI_width/3,-gap/2,(Len_MMI/2+taper_length),(Len_MMI/2),-wg_array_thickness/2,wg_array_thickness/2,0,wg_array_width),
+        medium = sin,
+    )
+
+    Wg_out1 = td.Structure(
+        geometry = create_ridge(wg_array_width,gap/2,(Len_MMI/2+taper_length),(Len_MMI/2+taper_length+wvg_length),-wg_array_thickness/2,wg_array_thickness/2,0),
+        medium = sin,
+    )
+    Taper_out1 = td.Structure(
+        geometry = create_taper(MMI_width/3,gap/2,(Len_MMI/2+taper_length),(Len_MMI/2),-wg_array_thickness/2,wg_array_thickness/2,0,wg_array_width),
+        medium = sin,
+    )
+
+    ####
+
+    #definimos los monitores y fuentes
+
+    mode_spec = td.ModeSpec(
+        num_modes=2,
+        target_neff=3,
+        track_freq="central",
+        precision= "double",
+        group_index_step=True
+    )
+    mode_source = td.ModeSource(
+        center = (-gap/2,-(Len_MMI/2+taper_length+1.5),0),
+        size = (3 * wg_array_width,0 , 5*wg_array_thickness),
+        source_time=td.GaussianPulse(freq0=freq0, fwidth=fwidth),
+        direction = "+",
+        mode_spec = mode_spec,
+        mode_index=0,
+        num_freqs=5,
+    )
+    field_monitor1 = td.FieldMonitor(
+        center = (0,0,0), size = (td.inf,td.inf,0), freqs=[freq0], name = "field1"
+    )
+    field_monitor11 = td.FieldMonitor(
+        center = (0,0,wg_array_thickness/2), size = (td.inf,td.inf,0), freqs=[freq0], name = "field11"
+    )
+    field_monitor2 = td.FieldMonitor(
+        center = (0,0,0), size = (td.inf,0,td.inf), freqs=[freq0], name = "field2"
+    )
+    field_monitor3 = td.FieldMonitor(
+        center = (0,Len_MMI/4,0), size = (td.inf,0,td.inf), freqs=[freq0], name = "field3"
+    )
+    field_monitor4 = td.FieldMonitor(
+        center = (0,-Len_MMI/4,0), size = (td.inf,0,td.inf), freqs=[freq0], name = "field4"
+    )
+
+    field_monitor5 = td.FieldMonitor(
+        center = (0,(Len_MMI/2+taper_length+1.5),0), size = (td.inf,0,td.inf), freqs=[freq0], name = "field5"
+    )
+
+    flux_monitor0 = td.FluxMonitor(
+        center = (-gap/2,-(Len_MMI/2+taper_length+1.4),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux0",
+    )
+
+
+    flux_monitor1 = td.FluxMonitor(
+        center = (-gap/2,(Len_MMI/2+taper_length+1.5),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux1",
+    )
+
+    mode_monitor1 = td.ModeMonitor(
+        center = (-gap/2, (Len_MMI/2+taper_length+3/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode1",
+
+    )
+
+    flux_monitor2 = td.FluxMonitor(
+        center = (gap/2,(Len_MMI/2+taper_length+1.5),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux2",
+    )
+
+    mode_monitor2 = td.ModeMonitor( 
+        center = (gap/2, (Len_MMI/2+taper_length+3/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode2",
+    )
+    flux_monitor00 = td.FluxMonitor(
+        center = (-gap/2,-(Len_MMI/2),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux00",
+    )
+
+    mode_monitor00 = td.ModeMonitor(
+        center = (-gap/2, -(Len_MMI/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode00",
+
+    )
+
+    flux_monitor11 = td.FluxMonitor(
+        center = (-gap/2,(Len_MMI/2),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux11",
+    )
+
+    mode_monitor11 = td.ModeMonitor(
+        center = (-gap/2, (Len_MMI/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode11",
+
+    )
+
+    flux_monitor22 = td.FluxMonitor(
+        center = (gap/2,(Len_MMI/2),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux22",
+    )
+
+    mode_monitor22 = td.ModeMonitor( 
+        center = (gap/2, (Len_MMI/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode22",
+    )
+
+    Lx = 1.5*MMI_width 
+    Ly= 1.5*(Len_MMI+taper_length) 
+    Lz = 2*wg_array_thickness
+    grid_spec = td.GridSpec.auto(min_steps_per_wvl=15,wavelength=1.55)
+    sim = td.Simulation(
+        size = (Lx,Ly,Lz),
+        grid_spec = grid_spec,
+        run_time = 3e-12,
+        boundary_spec= td.BoundarySpec.all_sides(boundary = td.PML()),
+        medium=sio2,
+        structures=(MMI_body,Wg_in0,Taper_in0,Wg_in1,Taper_in1,Wg_out0,Taper_out0,Wg_out1,Taper_out1),
+        sources=[mode_source],
+        monitors = [field_monitor1,field_monitor2,field_monitor3,field_monitor4,field_monitor5,flux_monitor0,flux_monitor1,flux_monitor2]#,mode_monitor1,mode_monitor2,flux_monitor00,flux_monitor11,flux_monitor22,mode_monitor00,mode_monitor11,mode_monitor22],
+    )
+
+    reference_point = (0,0)
+    waveguide_point = (0,0)
+    other_point = (0,(Len_MMI/2+taper_length+1.5))
+
+    spectrum = wvlenth[::10]
+
+    waveguide_medium = approximate_material(sim, waveguide_point, reference_point, spectrum)
+    background_medium = approximate_material(sim, other_point, reference_point, spectrum)
+
+    sim_2D = create_2D_sim(sim, [waveguide_medium, background_medium])
+    sim_2D.plot_eps(z=0,freq=freq0)
+
+    job = web.Job(simulation=sim_2D, task_name="MMI_2D", verbose=True)
+    sim_data = job.run(path="data/MMI_2D.hdf5")
+
+    T1 = sim_data["flux1"].flux
+    T2 = sim_data["flux2"].flux
+
+    T1 = T1[int(len(T1)/2)] 
+    T2 = T2[int(len(T1)/2)]
+
+    par = T1-T2 # si es cero, salen de ambas guias la misma potencia
+    return par
+
+
+def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs):
+    MMI_body = td.Structure(
+    geometry = create_ridge2(MMI_width,0,-Len_MMI/2,Len_MMI/2,-wg_array_thickness/2,wg_array_thickness/2,0,taper_length),
+    medium = sin,)
+
+    Wg_in0 = td.Structure(
+        geometry = create_ridge(wg_array_width,-gap/2,-(Len_MMI/2+taper_length+wvg_length),-(Len_MMI/2+taper_length),-wg_array_thickness/2,wg_array_thickness/2,0),
+        medium = sin,
+    )
+    Taper_in0 = td.Structure(
+        geometry = create_taper(MMI_width/3,-gap/2,-(Len_MMI/2+taper_length),-(Len_MMI/2),-wg_array_thickness/2,wg_array_thickness/2,0,wg_array_width),
+        medium = sin,
+    )
+
+    Wg_in1 = td.Structure(
+        geometry = create_ridge(wg_array_width,gap/2,-(Len_MMI/2+taper_length+wvg_length),-(Len_MMI/2+taper_length),-wg_array_thickness/2,wg_array_thickness/2,0),
+        medium = sin,
+    )
+    Taper_in1 = td.Structure(
+        geometry = create_taper(MMI_width/3,gap/2,-(Len_MMI/2+taper_length),-(Len_MMI/2),-wg_array_thickness/2,wg_array_thickness/2,0,wg_array_width),
+        medium = sin,
+    )
+
+    Wg_out0 = td.Structure(
+        geometry = create_ridge(wg_array_width,-gap/2,(Len_MMI/2+taper_length),(Len_MMI/2+taper_length+wvg_length),-wg_array_thickness/2,wg_array_thickness/2,0),
+        medium = sin,
+    )
+    Taper_out0 = td.Structure(
+        geometry = create_taper(MMI_width/3,-gap/2,(Len_MMI/2+taper_length),(Len_MMI/2),-wg_array_thickness/2,wg_array_thickness/2,0,wg_array_width),
+        medium = sin,
+    )
+
+    Wg_out1 = td.Structure(
+        geometry = create_ridge(wg_array_width,gap/2,(Len_MMI/2+taper_length),(Len_MMI/2+taper_length+wvg_length),-wg_array_thickness/2,wg_array_thickness/2,0),
+        medium = sin,
+    )
+    Taper_out1 = td.Structure(
+        geometry = create_taper(MMI_width/3,gap/2,(Len_MMI/2+taper_length),(Len_MMI/2),-wg_array_thickness/2,wg_array_thickness/2,0,wg_array_width),
+        medium = sin,
+    )
+
+    ####
+
+    #definimos los monitores y fuentes
+
+    mode_spec = td.ModeSpec(
+        num_modes=2,
+        target_neff=3,
+        track_freq="central",
+        precision= "double",
+        group_index_step=True
+    )
+    mode_source = td.ModeSource(
+        center = (-gap/2,-(Len_MMI/2+taper_length+1.5),0),
+        size = (3 * wg_array_width,0 , 5*wg_array_thickness),
+        source_time=td.GaussianPulse(freq0=freq0, fwidth=fwidth),
+        direction = "+",
+        mode_spec = mode_spec,
+        mode_index=0,
+        num_freqs=5,
+    )
+    field_monitor1 = td.FieldMonitor(
+        center = (0,0,0), size = (td.inf,td.inf,0), freqs=[freq0], name = "field1"
+    )
+    field_monitor11 = td.FieldMonitor(
+        center = (0,0,wg_array_thickness/2), size = (td.inf,td.inf,0), freqs=[freq0], name = "field11"
+    )
+    field_monitor2 = td.FieldMonitor(
+        center = (0,0,0), size = (td.inf,0,td.inf), freqs=[freq0], name = "field2"
+    )
+    field_monitor3 = td.FieldMonitor(
+        center = (0,Len_MMI/4,0), size = (td.inf,0,td.inf), freqs=[freq0], name = "field3"
+    )
+    field_monitor4 = td.FieldMonitor(
+        center = (0,-Len_MMI/4,0), size = (td.inf,0,td.inf), freqs=[freq0], name = "field4"
+    )
+
+    field_monitor5 = td.FieldMonitor(
+        center = (0,(Len_MMI/2+taper_length+1.5),0), size = (td.inf,0,td.inf), freqs=[freq0], name = "field5"
+    )
+
+    flux_monitor0 = td.FluxMonitor(
+        center = (-gap/2,-(Len_MMI/2+taper_length+1.4),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux0",
+    )
+
+
+    flux_monitor1 = td.FluxMonitor(
+        center = (-gap/2,(Len_MMI/2+taper_length+1.5),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux1",
+    )
+
+    mode_monitor1 = td.ModeMonitor(
+        center = (-gap/2, (Len_MMI/2+taper_length+3/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode1",
+
+    )
+
+    flux_monitor2 = td.FluxMonitor(
+        center = (gap/2,(Len_MMI/2+taper_length+1.5),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux2",
+    )
+
+    mode_monitor2 = td.ModeMonitor( 
+        center = (gap/2, (Len_MMI/2+taper_length+3/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode2",
+    )
+    flux_monitor00 = td.FluxMonitor(
+        center = (-gap/2,-(Len_MMI/2),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux00",
+    )
+
+    mode_monitor00 = td.ModeMonitor(
+        center = (-gap/2, -(Len_MMI/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode00",
+
+    )
+
+    flux_monitor11 = td.FluxMonitor(
+        center = (-gap/2,(Len_MMI/2),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux11",
+    )
+
+    mode_monitor11 = td.ModeMonitor(
+        center = (-gap/2, (Len_MMI/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode11",
+
+    )
+
+    flux_monitor22 = td.FluxMonitor(
+        center = (gap/2,(Len_MMI/2),0),
+        size = (2 * wg_array_width,0,5*wg_array_thickness),
+        freqs = freqs,
+        name = "flux22",
+    )
+
+    mode_monitor22 = td.ModeMonitor( 
+        center = (gap/2, (Len_MMI/2),0),
+        size = (2 * wg_array_width,0 , 5*wg_array_thickness),
+        freqs= freqs,
+        mode_spec = td.ModeSpec(num_modes=1,target_neff=3),
+        name = "mode22",
+    )
+
+    Lx = 1.5*MMI_width 
+    Ly= 1.5*(Len_MMI+taper_length) 
+    Lz = 2*wg_array_thickness
+    grid_spec = td.GridSpec.auto(min_steps_per_wvl=15,wavelength=1.55)
+    sim = td.Simulation(
+        size = (Lx,Ly,Lz),
+        grid_spec = grid_spec,
+        run_time = 3e-12,
+        boundary_spec= td.BoundarySpec.all_sides(boundary = td.PML()),
+        medium=sio2,
+        structures=(MMI_body,Wg_in0,Taper_in0,Wg_in1,Taper_in1,Wg_out0,Taper_out0,Wg_out1,Taper_out1),
+        sources=[mode_source],
+        monitors = [field_monitor1,field_monitor2,field_monitor3,field_monitor4,field_monitor5,flux_monitor0,flux_monitor1,flux_monitor2]#,mode_monitor1,mode_monitor2,flux_monitor00,flux_monitor11,flux_monitor22,mode_monitor00,mode_monitor11,mode_monitor22],
+    )
+    job = web.Job(simulation=sim, task_name="MMI_2x2", verbose=True)
+    sim_data = job.run(path="data/MMI_2x2.hdf5")
+
+    T1 = sim_data["flux1"].flux
+    T2 = sim_data["flux2"].flux
+
+    T1 = T1[int(len(T1)/2)] 
+    T2 = T2[int(len(T1)/2)]
+
+    par = T1-T2
+    return par
+
