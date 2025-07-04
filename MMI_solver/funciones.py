@@ -863,9 +863,10 @@ def create_2D_MMI_simulation(wvlenth,Len_MMI,MMI_width, wg_array_thickness, wg_a
     T1 = sim_data["flux1"].flux
     T2 = sim_data["flux2"].flux
 
-    T1 = T1[int(len(T1)/2)] 
-    T2 = T2[int(len(T1)/2)]
-
+    a =int(len(T1)/2)
+    T1 = T1[a] 
+    T2 = T2[a]
+    
     par = T1-T2 # si es cero, salen de ambas guias la misma potencia
     return par
 
@@ -1056,9 +1057,10 @@ def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_wid
     T1 = sim_data["flux1"].flux
     T2 = sim_data["flux2"].flux
 
-    T1 = T1[0] 
-    T2 = T2[0]
-
+    a =int(len(T1)/2)
+    T1 = T1[a] 
+    T2 = T2[a]
+    
     par = T1-T2
     return par
 
