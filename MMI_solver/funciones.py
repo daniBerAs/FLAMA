@@ -1056,8 +1056,8 @@ def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_wid
     T1 = sim_data["flux1"].flux
     T2 = sim_data["flux2"].flux
 
-    T1 = T1[int(len(T1)/2)] 
-    T2 = T2[int(len(T1)/2)]
+    T1 = T1[0] 
+    T2 = T2[0]
 
     par = T1-T2
     return par
