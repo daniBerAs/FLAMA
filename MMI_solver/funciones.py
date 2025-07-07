@@ -870,7 +870,7 @@ def create_2D_MMI_simulation(wvlenth,Len_MMI,MMI_width, wg_array_thickness, wg_a
     return par
 
 
-def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs,len_corner):
+def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs,len_corner,balance_weight,loss_weight):
     MMI_body = td.Structure(
     geometry = create_ridge2(MMI_width,0,-Len_MMI/2,Len_MMI/2,-wg_array_thickness/2,wg_array_thickness/2,0,len_corner),
     medium = sin,)
@@ -1060,5 +1060,5 @@ def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_wid
     T1 = T1[a] 
     T2 = T2[a]
     
-    par = 0.5*(abs(T1-T2)) + 0.5*(1 -T1 -T2)
+    par = balance_weight*(abs(T1-T2)) + loss_weight*(1 -T1 -T2)
     return par
