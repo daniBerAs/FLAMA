@@ -1060,5 +1060,5 @@ def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_wid
     T1 = T1[a] 
     T2 = T2[a]
     
-    par = 0.8*(abs(T1-T2)) + 0.2*(1 -T1 -T2)
+    par = 0.5*(abs(T1-T2)) + 0.5*(1 -T1 -T2)
     return par
