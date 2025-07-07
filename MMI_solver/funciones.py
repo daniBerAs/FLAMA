@@ -526,10 +526,10 @@ def create_ridge(w0,x0,y0,y1,z0,z1,angle):
 
     return ridge * box
 
-def create_ridge2(w0,x0,y0,y1,z0,z1,angle,len_taper):
+def create_ridge2(w0,x0,y0,y1,z0,z1,angle,len_corner):
     width = w0
-    width_corner = width / 12
-    len_corner = len_taper / 2
+    width_corner = width / 6
+    
     ridge=td.PolySlab(
         vertices = [(x0-width/2,y0+len_corner),(x0-width/2+width_corner,y0),(x0+width/2-width_corner,y0),(x0+width/2,y0+len_corner),(x0+width/2,y1-len_corner),(x0+width/2-width_corner,y1),(x0-width/2+width_corner,y1),(x0-width/2,y1-len_corner)],
         axis = 2,
@@ -664,9 +664,9 @@ def create_2D_sim(sim_3D,new_mediums):
     return sim_2D
 
 #definimos la simulacion
-def create_2D_MMI_simulation(wvlenth,Len_MMI,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs):
+def create_2D_MMI_simulation(wvlenth,Len_MMI,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs,len_corner):
     MMI_body = td.Structure(
-    geometry = create_ridge2(MMI_width,0,-Len_MMI/2,Len_MMI/2,-wg_array_thickness/2,wg_array_thickness/2,0,taper_length),
+    geometry = create_ridge2(MMI_width,0,-Len_MMI/2,Len_MMI/2,-wg_array_thickness/2,wg_array_thickness/2,0,len_corner),
     medium = sin,)
 
     Wg_in0 = td.Structure(
@@ -862,18 +862,17 @@ def create_2D_MMI_simulation(wvlenth,Len_MMI,MMI_width, wg_array_thickness, wg_a
 
     T1 = sim_data["flux1"].flux
     T2 = sim_data["flux2"].flux
-
     a =int(len(T1)/2)
     T1 = T1[a] 
     T2 = T2[a]
-    
+
     par = abs(T1-T2) # si es cero, salen de ambas guias la misma potencia
     return par
 
 
-def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs):
+def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs,len_corner):
     MMI_body = td.Structure(
-    geometry = create_ridge2(MMI_width,0,-Len_MMI/2,Len_MMI/2,-wg_array_thickness/2,wg_array_thickness/2,0,taper_length),
+    geometry = create_ridge2(MMI_width,0,-Len_MMI/2,Len_MMI/2,-wg_array_thickness/2,wg_array_thickness/2,0,len_corner),
     medium = sin,)
 
     Wg_in0 = td.Structure(
@@ -1061,6 +1060,5 @@ def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_wid
     T1 = T1[a] 
     T2 = T2[a]
     
-    par = abs(T1-T2)
+    par = 0.8*(abs(T1-T2)) + 0.2*(1 -T1 -T2)
     return par
-
