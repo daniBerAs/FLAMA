@@ -19,7 +19,8 @@ dependencies = [
     "scikit-fem",
     "gdstk",
     "meshio",
-    "femwell"
+    "femwell",
+    "autograd"
 ]
 
 [tool.setuptools_scm]
