@@ -20,7 +20,8 @@ dependencies = [
     "gdstk",
     "meshio",
     "femwell",
-    "autograd"
+    "autograd",
+    "optax"
 ]
 
 [tool.setuptools_scm]
