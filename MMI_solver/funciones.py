@@ -1063,7 +1063,32 @@ def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_wid
     par = balance_weight*(abs(T1-T2)) + loss_weight*(1 -T1 -T2)
     return par
 
-def create_2D_MMI_simulation_only(wvlenth,Len_MMI,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs,len_corner):
+def create_2D_MMI_simulation_only(Len_MMI):
+    input_positions = [-1/6,1/6] #posiciones de las waveguides de entrada
+    wg_array_width=1.00 #anchura de la waveguide de entrada/salida
+    wg_array_thickness=0.8 #altura de la waveguide de entrada/salida, es igual que la del MMI
+    MMI_width=6.0 #anchura del MMI
+    gap = (input_positions[1]-input_positions[0]) * MMI_width 
+    wvlenth = np.linspace(1.5,1.6,101)
+    freqs = td.C_0 / wvlenth
+    fwidth = 0.5 * (np.max(freqs) - np.min(freqs))
+    freq0 = td.C_0 / 1.55
+    wvg_length = 1000
+    taper_length = 5.0
+    len_corner = taper_length
+    #en primer lugar, definimos los materiales
+
+    #sin = td.material_library['SiN']['Horiba'] #cristaline silicon
+    #sio2 = td.material_library['SiO2']['Horiba']
+
+    n_sin = 1.99
+    n_sio2 = 1.44
+
+    sin = td.Medium(permittivity=n_sin**2)
+    sio2 = td.Medium(permittivity=n_sio2**2)
+        
+        
+    
     MMI_body = td.Structure(
     geometry = create_ridge2(MMI_width,0,-Len_MMI/2,Len_MMI/2,-wg_array_thickness/2,wg_array_thickness/2,0,len_corner),
     medium = sin,)

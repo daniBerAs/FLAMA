@@ -6,4 +6,4 @@ from .funciones import var_eps_eff
 from .funciones import approximate_material
 from .funciones import create_2D_sim
 from .funciones import create_3D_MMI_simulation
-from .funciones import create_2D_MMI_simulation
+from .funciones import create_2D_MMI_simulation_only
