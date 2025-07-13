@@ -1063,7 +1063,7 @@ def create_3D_MMI_simulation(Len_MMI,MMI_width, wg_array_thickness, wg_array_wid
     par = balance_weight*(abs(T1-T2)) + loss_weight*(1 -T1 -T2)
     return par
 
-def create_2D_MMI_simulation_only(Len_MMI):
+def create_2D_MMI_simulation_only(Len_MMI_array):
     input_positions = [-1/6,1/6] #posiciones de las waveguides de entrada
     wg_array_width=1.00 #anchura de la waveguide de entrada/salida
     wg_array_thickness=0.8 #altura de la waveguide de entrada/salida, es igual que la del MMI
@@ -1077,7 +1077,7 @@ def create_2D_MMI_simulation_only(Len_MMI):
     taper_length = 5.0
     len_corner = taper_length
     #en primer lugar, definimos los materiales
-
+    Len_MMI = Len_MMI_array[0] #longitud del MMI
     #sin = td.material_library['SiN']['Horiba'] #cristaline silicon
     #sio2 = td.material_library['SiO2']['Horiba']
 
