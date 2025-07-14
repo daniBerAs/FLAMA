@@ -542,7 +542,7 @@ def create_ridge_butterfly_ACD(w0,x0,y0,y1,z0,z1,angle,central_width_variation):
 def create_ridge_butterfly_B(w0,x0,y0,y1,z0,z1,angle,central_width_variation):
     width = w0
     ridge=td.PolySlab(
-        vertices = [(x0-width/2,y0),(x0+width/2,y0),(x0+width/2-central_width_variation/2,y0/2),(x0+width/2,0),(x0+width/2-central_width_variation/2,y1/2),(x0+width/2,y1),(x0-width/2,y1),(x0-width/2+central_width_variation/2,y1/2),(x0-width/2,0),(x0-width/2+central_width_variation/2,y1/2)],
+        vertices = [(x0-width/2,y0),(x0+width/2,y0),(x0+width/2-central_width_variation/2,y0/2),(x0+width/2,0),(x0+width/2-central_width_variation/2,y1/2),(x0+width/2,y1),(x0-width/2,y1),(x0-width/2+central_width_variation/2,y1/2),(x0-width/2,0),(x0-width/2+central_width_variation/2,y0/2)],
         axis = 2,
         reference_plane="top",
         sidewall_angle = angle,
