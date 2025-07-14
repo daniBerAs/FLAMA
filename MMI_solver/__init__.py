@@ -1,5 +1,7 @@
 from .funciones import MMI
 from .funciones import create_ridge
+from .funciones import create_ridge_butterfly_ACD
+from .funciones import create_ridge_butterfly_B
 from .funciones import create_ridge2
 from .funciones import create_taper
 from .funciones import var_eps_eff
