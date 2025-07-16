@@ -464,7 +464,7 @@ def MMI(
     #calculo de modos
     MMI_modes , MMI_basis , XY = mode_finder_MMI(MMI_width, wg_array_thickness,  wvl, mat_core, mat_clad, MMI_num_modes)
     MMI_modes_TE, MMI_modes_TM = get_TETM(MMI_modes)
-    Lpi_TE, Lpi_TM,_, _, _, _=L_pi(MMI_modes, wvl)
+    Lpi_TE, Lpi_TM,neff_TE, _, _, _=L_pi(MMI_modes, wvl)
     
     #Lpi_TE, Lpi_TM,neff_te, neff_tm, MMI_modes_TE, MMI_modes_TM = L_pi(MMI_modes, wvl)
 
@@ -507,7 +507,7 @@ def MMI(
     excess_loss, ratio_out = output_field(overlap_out_TE, campo_salida_mmi,overlap_in_TE)
     if gap<0:
         print('error: gap negativo')
-    return ratio_out ,excess_loss, L_v, intensidad_L, Lpi_TE, Lpi_TM
+    return ratio_out ,excess_loss, L_v, intensidad_L, Lpi_TE, Lpi_TM, neff_TE
 
         
 ##Funciones tidy3d
