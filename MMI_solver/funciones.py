@@ -1312,7 +1312,7 @@ def create_2D_MMI_simulation_only(Len_MMI_array):
 #### BUTTERFLIES ####
 
 
-def create_3D_MMI_simulation_butterfly_A(opt_len, width_dif,ratio_bar,ratio_cross,neff_TE0,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs,len_corner,balance_weight,loss_weight):
+def create_3D_MMI_simulation_butterfly_A(opt_len, width_dif,ratio_bar,ratio_cross,neff_TE0,MMI_width, wg_array_thickness, wg_array_width,wvg_length, gap, taper_length, freq0, fwidth, sin, sio2,freqs,balance_weight,loss_weight):
     #recomendable tener opt_len = 0 al empezar -> parametro a optimizar
     input_positions = [-1/6,1/6] #posiciones de las waveguides de entrada
     output_positions = [-1/6,1/6] #la maxima posicion es [-1/2,1/2]
@@ -1735,7 +1735,7 @@ def create_3D_MMI_simulation_butterfly_D(opt_len, width_dif,ratio_bar,ratio_cros
         output_positions[i] = output_positions[i] * MMI_width
 
     Len_c = 4/3 * neff_TE0*(MMI_width * (MMI_width-width_dif))/1.55
-    Len_MMI = Len_c * 3/5-1.7
+    Len_MMI = Len_c * 3/5-opt_len
     MMI_body = td.Structure(
         geometry = create_ridge_butterfly_ACD(MMI_width,0,-Len_MMI/2,Len_MMI/2,-wg_array_thickness/2,wg_array_thickness/2,0,width_dif),
         medium = sin,)
