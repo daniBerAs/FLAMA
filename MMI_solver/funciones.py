@@ -1720,7 +1720,7 @@ def create_3D_MMI_simulation_butterfly_C(opt_len, width_dif,ratio_bar,ratio_cros
     T1 = T1[a] 
     T2 = T2[a]
     
-    par = balance_weight*(T1-ratio_bar) + loss_weight*(1 -T1 -T2)
+    par = balance_weight*abs(T1/(T1+T2)-ratio_bar) + loss_weight*( -10*np.log10((T1 + T2)))
 
     return par, Len_MMI
 
@@ -1884,7 +1884,7 @@ def create_3D_MMI_simulation_butterfly_D(opt_len, width_dif,ratio_bar,ratio_cros
     T1 = T1[a] 
     T2 = T2[a]
     
-    par = balance_weight*(abs(T1-T2)-abs(ratio_bar-ratio_cross)/(ratio_bar+ratio_cross)) + loss_weight*(1 -T1 -T2)
+    par = balance_weight*abs(T1/(T1+T2)-ratio_bar) + loss_weight*( -10*np.log10((T1 + T2)))
 
     return par, Len_MMI
 
