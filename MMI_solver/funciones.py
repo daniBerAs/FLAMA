@@ -1517,7 +1517,7 @@ def create_3D_MMI_simulation_butterfly_A(opt_len, width_dif,ratio_bar,ratio_cros
 
     return par, Len_MMI
 
-def create_3D_MMI_simulation_butterfly_C(opt_len, width_dif,ratio_bar,ratio_cross,neff_TE0,MMI_width, wg_array_thickness, wg_array_width,wvg_length, taper_length, freq0, fwidth, sin, sio2,freqs,len_corner,balance_weight,loss_weight):
+def create_3D_MMI_simulation_butterfly_C(opt_len, width_dif,ratio_bar,ratio_cross,neff_TE0,MMI_width, wg_array_thickness, wg_array_width,wvg_length, taper_length, freq0, fwidth, sin, sio2,freqs,balance_weight,loss_weight):
     #recomendable tener opt_len = 0 al empezar -> parametro a optimizar
     input_positions = [-1/4,1/4] #posiciones de las waveguides de entrada
     output_positions = [-1/4,1/4] #la maxima posicion es [-1/2,1/2]
