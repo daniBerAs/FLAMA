@@ -12,3 +12,4 @@ from .funciones import create_2D_MMI_simulation_only
 from .funciones import create_3D_MMI_simulation_butterfly_D
 from .funciones import create_3D_MMI_simulation_butterfly_A
 from .funciones import create_3D_MMI_simulation_butterfly_C
+from .funciones import create_3D_MMI_simulation_butterfly_B
